@@ -28,12 +28,12 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('AxisHttpClient', () => {
+describe('AxiosHttpClient', () => {
   test('Should call axios with correct values', async () => {
     const request = mockPostRequest()
     const { sut, mockedAxios } = makeSut()
     await sut.post(request)
-    expect(mockedAxios.post).toBeCalledWith(request.url, request.body)
+    expect(mockedAxios.post).toBeCalledWith(request.url, request.body, request.headers)
   })
 
   test('Should return the correct statusCode and body', () => {
