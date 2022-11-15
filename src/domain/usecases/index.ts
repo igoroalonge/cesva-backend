@@ -1,0 +1,5 @@
+export * from './local/recognizer'
+export * from './local/recognitions'
+export * from './remote/recognition'
+export * from './remote/recognizer'
+export * from '../../presentation/protocols/websocket-event'
