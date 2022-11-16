@@ -20,7 +20,8 @@ jobs:
         REMOTE_USER: "ec2-user"
         TARGET: "/home/ec2-user"
         EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
-
-    - name: Add Recognizer Key (prod)
+    
+    - name: Add Plate Recognizer Key
+      run: export PLATE_RECOGNIZER_KEY=${{ secrets.PLATE_RECOGNIZER_KEY }}
       env:
         PLATE_RECOGNIZER_KEY: ${{ secrets.PLATE_RECOGNIZER_KEY }}
