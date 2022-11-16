@@ -21,10 +21,6 @@ jobs:
         TARGET: "/home/ec2-user"
         EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
     
-    - name: Install Dependencies (prod)
-      run: nvm install 16 npm install
-
-    - name: Start (prod)
-      run: npm run build
+    - name: Add Plate Recognizer Key (prod)
       env:
         PLATE_RECOGNIZER_KEY: ${{ secrets.PLATE_RECOGNIZER_KEY }}
