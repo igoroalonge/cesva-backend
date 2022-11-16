@@ -25,3 +25,6 @@ jobs:
       run: export PLATE_RECOGNIZER_KEY=${{ secrets.PLATE_RECOGNIZER_KEY }}
       env:
         PLATE_RECOGNIZER_KEY: ${{ secrets.PLATE_RECOGNIZER_KEY }}
+
+    - name: Sla so to testando
+      run: npm run build
