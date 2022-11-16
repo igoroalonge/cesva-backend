@@ -20,3 +20,11 @@ jobs:
         REMOTE_USER: "ec2-user"
         TARGET: "/home/ec2-user"
         EXCLUDE: "/dist/, /node_modules/, **.env, rebuild_app.sh, watcher.sh"
+    
+    - name: Install Dependencies (prod)
+      run: nvm install 16 npm install
+
+    - name: Start (prod)
+      run: npm run build
+      env:
+        PLATE_RECOGNIZER_KEY: ${{ secrets.PLATE_RECOGNIZER_KEY }}
