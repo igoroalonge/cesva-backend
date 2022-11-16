@@ -29,7 +29,7 @@ export class PhotoEvent implements Event {
 
       const rawImageBuffer = imageBufferFromBase64(base64Image)
       await this.imageFormatter.update(rawImageBuffer)
-      //await this.imageFormatter.rotate(-90)
+      await this.imageFormatter.rotate(-90)
       const imageBuffer = await this.imageFormatter.normalize()
       
       await this.localRecognizer.recognize(imageBuffer)
