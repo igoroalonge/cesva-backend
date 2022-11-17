@@ -60,6 +60,7 @@ export class PhotoEvent implements Event {
         upload: imageBuffer.toString('base64')
       })
       const remoteRecognition = new RemoteRecognition(remoteRecognitionData)
+      console.log(remoteRecognition)
       if (!remoteRecognition.isValid) {
         console.log(`PhotoEvent(${client.id}): remote recognition not valid`)
         client.send(`photo`)
