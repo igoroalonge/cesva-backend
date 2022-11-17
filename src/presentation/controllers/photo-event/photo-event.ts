@@ -57,12 +57,13 @@ export class PhotoEvent implements Event {
       console.log(`PhotoEvent(${client.id}): local recognition returned`)
       console.log(bestLocalRecognition)
       const remoteRecognitionData = await this.remoteRecognizer.recognize({
-        upload: base64Image
+        upload: imageBuffer.toString('base64')
       })
       const remoteRecognition = new RemoteRecognition(remoteRecognitionData)
       if (!remoteRecognition.isValid) {
         console.log(`PhotoEvent(${client.id}): remote recognition not valid`)
         client.send(`photo`)
+        return
       }
       
       console.log(`PhotoEvent(${client.id}): remote recognition best plate is ${remoteRecognition.BestPlate}`)
