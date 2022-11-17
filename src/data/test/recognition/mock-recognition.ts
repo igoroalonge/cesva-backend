@@ -1,20 +1,22 @@
-import { IRemoteRecognitionData } from "@/domain/models";
+import { ILocalRecognitionModel, IRemoteRecognitionData } from "@/domain/models"
 
-export const fakePredictions = [{
-  class: 'car',
-  score: 300,
-  bbox: []
-},
-{
-  class: 'motorbike',
-  score: 500,
-  bbox: []
-},
-{
-  class: 'car',
-  score: 400,
-  bbox: []
-}]
+export const mockLocalRecognitions: ILocalRecognitionModel[] = [
+  {
+    class: 'car',
+    score: 300,
+    bbox: []
+  },
+  {
+    class: 'motorbike',
+    score: 500,
+    bbox: []
+  },
+  {
+    class: 'car',
+    score: 400,
+    bbox: []
+  }
+]
 
 export const mockRemoteRecognitionData = (): IRemoteRecognitionData => ({
   processing_time: 1.0,

@@ -1,12 +1,12 @@
 import { ICPURecognizer } from '@/data/protocols/cpu-recognizer'
-import { mockCarImageBuffer, fakePredictions } from '@/data/test'
+import { mockCarImageBuffer, mockLocalRecognitions } from '@/data/test'
 import { ILocalRecognitionModel } from '@/domain/models'
 import { LocalRecognizer } from './recognizer'
 
 const makeCPURecognizer = (): ICPURecognizer => {
   class CPURecognizerStub implements ICPURecognizer {
     async detect(buffer: Buffer): Promise<ILocalRecognitionModel[]> {
-      return fakePredictions
+      return mockLocalRecognitions
     }
   }
   return new CPURecognizerStub()
@@ -31,7 +31,7 @@ describe('Local Recognizer', () => {
     const { sut } = makeSut()
     const carImageBuffer = await mockCarImageBuffer()
     await sut.recognize(carImageBuffer)
-    expect(sut.predictions).toBe(fakePredictions)
+    expect(sut.predictions).toBe(mockLocalRecognitions)
   })
 
   test('Should return best vehicle if recognize', async () => {
@@ -58,5 +58,15 @@ describe('Local Recognizer', () => {
       bbox: []
     })
     expect(index).toBe(2)
+  })
+
+  test('Should throw if CPURecognizer throws', async () => {
+    const { sut, CPURecognizer } = makeSut()
+    const carImageBuffer = await mockCarImageBuffer()
+    jest.spyOn(CPURecognizer, 'detect').mockImplementationOnce(() => {
+      throw new Error()
+    })
+    const promise = sut.recognize(carImageBuffer)
+    await expect(promise).rejects.toThrow()
   })
 })

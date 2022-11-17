@@ -3,13 +3,18 @@ import { SocketWrapper } from "@/domain/models"
 import { Event, ILocalRecognizer, IRemoteRecognizer } from "@/domain/usecases"
 import { ImageFormatter } from "@/presentation/protocols"
 import { RemoteRecognition } from '@/data/usecases'
+import { v4 as uuidv4 } from 'uuid'
 
-const imageBufferFromBase64 = (base64: string): Buffer => {
-  const base64data = base64.replace(/^data:image\/png;base64,/, "").replace(/^data:image\/jpg;base64,/, "").replace(/^data:image\/jpeg;base64,/, "")
+const ImageBufferFromBase64 = async (base64: string): Promise<Buffer> => {
+  const base64data = base64
+    .replace(/^data:image\/png;base64,/, "")
+    .replace(/^data:image\/jpg;base64,/, "")
+    .replace(/^data:image\/jpeg;base64,/, "")
   return Buffer.from(base64data, 'base64')
 }
-const dateString = (d: Date): string => {
-  var s = `${d.getDate()}-${(d.getMonth() + 1)}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}-${d.getMilliseconds()}`
+
+const DateToSimpleString = (d: Date): string => {
+  var s = `${d.getDate()}-${(d.getMonth() + 1)}-${d.getFullYear()}-${d.getHours()}-${d.getMinutes()}`
   return s
 }
 
@@ -27,18 +32,20 @@ export class PhotoEvent implements Event {
       console.log("PhotoEvent: Analysing image from local recognizer")
       const base64Image = args[0]
 
-      const rawImageBuffer = imageBufferFromBase64(base64Image)
+      const rawImageBuffer = await ImageBufferFromBase64(base64Image)
+      console.log("PhotoEvent: Rotating and updating image.")
       await this.imageFormatter.update(rawImageBuffer)
       await this.imageFormatter.rotate(-90)
       const imageBuffer = await this.imageFormatter.normalize()
-      
+
       await this.localRecognizer.recognize(imageBuffer)
+      console.log("PhotoEvent: analized from local recognizer")
 
       const [bestLocalRecognition, index] = await this.localRecognizer.recognitions.bestFromModel("car")
       const nowDate = new Date()
-      fs.writeFile(`photos/${client.id}/${dateString(nowDate)}.jpg`, imageBuffer, (err) => {
-        if (err) { console.log(err) }
-      })
+
+      console.log("PhotoEvent: write into photo in local disk")
+      fs.writeFile(`photos/${client.id}/${DateToSimpleString(nowDate)}-${uuidv4()}.jpg`, imageBuffer, (err) => err && console.log(err))
 
       if (!bestLocalRecognition) {
         console.log("PhotoEvent: local recognition returned nothing")
@@ -53,13 +60,18 @@ export class PhotoEvent implements Event {
       })
       const remoteRecognition = new RemoteRecognition(remoteRecognitionData)
       if (!remoteRecognition.isValid) {
-        
+        console.log("PhotoEvent: remote recognition not valid")
+        client.send("photo")
       }
+      
+      console.log(`PhotoEvent: remote recognition best plate is ${remoteRecognition.BestPlate}`)
       client.send("open")
       return
     } catch (error) {
       console.log(error)
+      client.send("photo")
       return
     }
+    return
   }
 }
