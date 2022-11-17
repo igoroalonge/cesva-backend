@@ -33,11 +33,12 @@ export class PhotoEvent implements Event {
       const base64Image = args[0]
 
       const rawImageBuffer = await ImageBufferFromBase64(base64Image)
-      console.log("PhotoEvent: Rotating and updating image.")
+      console.log("PhotoEvent: Rotating and normalize image.")
       await this.imageFormatter.update(rawImageBuffer)
       await this.imageFormatter.rotate(-90)
       const imageBuffer = await this.imageFormatter.normalize()
 
+      console.log("PhotoEvent: Recognizing normalized image")
       await this.localRecognizer.recognize(imageBuffer)
       console.log("PhotoEvent: analized from local recognizer")
 
