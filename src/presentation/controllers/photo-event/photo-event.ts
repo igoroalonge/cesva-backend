@@ -29,43 +29,43 @@ export class PhotoEvent implements Event {
 
   public async callback(client: SocketWrapper, args: string[]): Promise<void> {
     try {
-      console.log("PhotoEvent: Analysing image from local recognizer")
+      console.log(`PhotoEvent: Analysing image from local recognizer`)
       const base64Image = args[0]
 
       const rawImageBuffer = await ImageBufferFromBase64(base64Image)
-      console.log("PhotoEvent: Rotating and normalize image.")
+      console.log(`PhotoEvent(${client.id}): Rotating and normalizing image`)
       await this.imageFormatter.update(rawImageBuffer)
       await this.imageFormatter.rotate(-90)
       const imageBuffer = await this.imageFormatter.normalize()
 
-      console.log("PhotoEvent: Recognizing normalized image")
+      console.log(`PhotoEvent(${client.id}): Recognizing normalized image`)
       await this.localRecognizer.recognize(imageBuffer)
-      console.log("PhotoEvent: analized from local recognizer")
+      console.log(`PhotoEvent(${client.id}): analized from local recognizer`)
 
       const [bestLocalRecognition, index] = await this.localRecognizer.recognitions.bestFromModel("car")
       const nowDate = new Date()
 
-      console.log("PhotoEvent: write into photo in local disk")
+      console.log(`PhotoEvent(${client.id}): write into photo in local disk`)
       fs.writeFile(`photos/${client.id}/${DateToSimpleString(nowDate)}-${uuidv4()}.jpg`, imageBuffer, (err) => err && console.log(err))
 
       if (!bestLocalRecognition) {
-        console.log("PhotoEvent: local recognition returned nothing")
-        client.send("photo")
+        console.log(`PhotoEvent(${client.id}): local recognition returned nothing`)
+        client.send(`photo`)
         return
       }
 
-      console.log("PhotoEvent: local recognition returned")
+      console.log(`PhotoEvent(${client.id}): local recognition returned`)
       console.log(bestLocalRecognition)
       const remoteRecognitionData = await this.remoteRecognizer.recognize({
         upload: base64Image
       })
       const remoteRecognition = new RemoteRecognition(remoteRecognitionData)
       if (!remoteRecognition.isValid) {
-        console.log("PhotoEvent: remote recognition not valid")
-        client.send("photo")
+        console.log(`PhotoEvent(${client.id}): remote recognition not valid`)
+        client.send(`photo`)
       }
       
-      console.log(`PhotoEvent: remote recognition best plate is ${remoteRecognition.BestPlate}`)
+      console.log(`PhotoEvent(${client.id}): remote recognition best plate is ${remoteRecognition.BestPlate}`)
       client.send("open")
       return
     } catch (error) {
