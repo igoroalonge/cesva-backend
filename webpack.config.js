@@ -32,13 +32,13 @@ module.exports = {
     new webpack.DefinePlugin({
       'process.browser': 'true'
     }),
-    new WebpackShellPlugin({
-      onBuildEnd:{
-        scripts: ['npm run watch'],
-        blocking: false,
-        parallel: true
-      }
-    })
+    //new WebpackShellPlugin({
+    //  onBuildEnd:{
+    //    scripts: ['npm run watch'],
+    //    blocking: false,
+    //    parallel: true
+    //  }
+    //})
   ],
   target: 'node',
 }
