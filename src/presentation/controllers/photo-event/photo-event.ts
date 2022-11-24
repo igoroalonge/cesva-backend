@@ -29,7 +29,7 @@ export class PhotoEvent implements Event {
 
   public async callback(client: SocketWrapper, args: string[]): Promise<void> {
     try {
-      console.log(`PhotoEvent: Analysing image from local recognizer`)
+      console.log(`PhotoEvent(${client.id}): Analysing image from local recognizer`)
       const base64Image = args[0]
 
       const rawImageBuffer = await ImageBufferFromBase64(base64Image)
